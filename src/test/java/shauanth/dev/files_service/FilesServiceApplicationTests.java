@@ -1,0 +1,13 @@
+package shauanth.dev.files_service;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class FilesServiceApplicationTests {
+
+    @Test
+    void contextLoads() {
+    }
+
+}
