@@ -751,3 +751,202 @@ Este proyecto está bajo licencia MIT.
 ## 💬 Soporte
 
 Para reportar bugs o sugerencias, abre un **Issue** en el repositorio.
+
+---
+
+## Guías consolidadas
+
+A continuación se incluyen todas las guías y ejemplos que antes estaban en archivos separados. Todo lo necesario para publicar, configurar y usar el paquete está aquí.
+
+---
+
+### CHECKLIST: Publicar en GitHub Packages
+
+Usa esta checklist mientras ejecutas los pasos. Marca cada paso con `[x]` cuando lo completes.
+
+---
+
+## FASE 1: PREPARACIÓN INICIAL
+
+- [ ] **Generar token de GitHub**
+  - [ ] Ve a https://github.com/settings/tokens
+  - [ ] Click en "Generate new token (classic)"
+  - [ ] Descripción: "Maven Publishing"
+  - [ ] Selecciona: `read:packages` + `write:packages`
+  - [ ] Click "Generate token"
+  - [ ] **Copia y guarda el token** (guárdalo en un lugar seguro)
+
+---
+
+## FASE 2: CONFIGURACIÓN DEL PROYECTO
+
+- [ ] **Actualizar pom.xml - Parte 1 (4 lugares)**
+  - [ ] Reemplazar `TU_USUARIO` con tu usuario GitHub en las URLs del `pom.xml`.
+
+- [ ] **Verificar pom.xml**
+  - [ ] GroupId: `io.github.shauanth`
+  - [ ] ArtifactId: `files-service`
+  - [ ] Version: `1.0.0`
+  - [ ] `distributionManagement` presente si vas a usar GitHub Packages
+
+---
+
+## Configuración segura (Variables de entorno / settings.xml / gh)
+
+Esta guía te ayuda a configurar credenciales sin exponer tokens.
+
+### Opción 1: Variables de entorno
+
+Windows (PowerShell):
+
+```powershell
+[Environment]::SetEnvironmentVariable("GITHUB_USERNAME", "tu_usuario", "User")
+[Environment]::SetEnvironmentVariable("GITHUB_TOKEN", "ghp_xxxxxxxxxxxxxxxxxxxx", "User")
+
+[Environment]::GetEnvironmentVariable("GITHUB_USERNAME", "User")
+```
+
+Linux/Mac (bash):
+
+```bash
+export GITHUB_USERNAME="tu_usuario"
+export GITHUB_TOKEN="ghp_xxxxxxxxxxxxxxxxxxxx"
+source ~/.bashrc
+```
+
+### Opción 2: `~/.m2/settings.xml` con placeholders
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.1.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd">
+  <activeProfiles>
+    <activeProfile>github</activeProfile>
+  </activeProfiles>
+
+  <profiles>
+    <profile>
+      <id>github</id>
+      <repositories>
+        <repository>
+          <id>central</id>
+          <url>https://repo1.maven.org/maven2</url>
+        </repository>
+        <repository>
+          <id>github</id>
+          <url>https://maven.pkg.github.com/${env.GITHUB_USERNAME}/Files_Service</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+
+  <servers>
+    <server>
+      <id>github</id>
+      <username>${env.GITHUB_USERNAME}</username>
+      <password>${env.GITHUB_TOKEN}</password>
+    </server>
+  </servers>
+</settings>
+```
+
+### Opción 3: `gh` (GitHub CLI)
+
+Instalación y login:
+
+```bash
+# Windows: choco install gh
+gh auth login
+```
+
+Maven puede usar las credenciales del `gh` autenticado para publicar.
+
+---
+
+## Ejemplos de uso (Controladores, servicios y tests)
+
+Incluye ejemplos de cómo usar `TransferService` en controladores y servicios, así como tests unitarios. Ejemplo de controlador:
+
+```java
+@RestController
+@RequestMapping("/api/files")
+public class FileController {
+    @Autowired
+    private TransferService transferService;
+
+    @PostMapping("/descargar")
+    public ResponseEntity<List<FileData>> descargarArchivos(@RequestBody List<String> urls) {
+        Map<String, String> headers = Map.of("Authorization", "Bearer mi_token_google");
+        List<FileData> archivos = transferService.downloadAsBase64Batch(urls, headers);
+        return ResponseEntity.ok(archivos);
+    }
+}
+```
+
+Ejemplo de test unitario (sólo referencia):
+
+```java
+@SpringBootTest
+class MiServicioDeArchivosTest {
+    @Autowired
+    private TransferService transferService;
+
+    @Test
+    void testDescargarArchivo() {
+        List<String> urls = List.of("https://ejemplo.com/archivo.pdf");
+        List<FileData> resultado = transferService.downloadAsBase64Batch(urls, null);
+        assertNotNull(resultado);
+    }
+}
+```
+
+---
+
+## Quickstart (5 minutos)
+
+1. Crear repo en GitHub y clonar.
+2. Reemplazar `TU_USUARIO` en `pom.xml` (URLs de proyecto y distributionManagement).
+3. Generar token con `read:packages` y `write:packages`.
+4. Configurar `~/.m2/settings.xml` o usar `gh`.
+5. Publicar:
+
+```bash
+mvn clean deploy -DskipTests
+```
+
+---
+
+## Reference Card (comandos rápidos)
+
+- Compilar: `mvn clean package -DskipTests`
+- Publicar: `mvn deploy -DskipTests`
+- Tag y push: `git tag v1.0.0 && git push origin v1.0.0`
+- Usar como dependencia (cliente pom.xml):
+
+```xml
+<repository>
+  <id>github</id>
+  <url>https://maven.pkg.github.com/TU_USUARIO/Files_Service</url>
+</repository>
+<dependency>
+  <groupId>io.github.shauanth</groupId>
+  <artifactId>files-service</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+---
+
+## Resumen de cambios y notas finales
+
+Se añadieron guías completas, ejemplos y referencias para publicar y usar `files-service`. Recomendación: reemplazar `TU_USUARIO` por tu usuario GitHub en `pom.xml` y en las secciones de publicación antes de ejecutar el primer `mvn deploy`.
+
+---
+
+## Notas sobre limpieza de documentación
+
+He consolidado las guías en este `README.md`; los archivos auxiliares se eliminarán para dejar un único punto de referencia.
