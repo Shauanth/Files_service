@@ -143,7 +143,7 @@ Ejemplos prácticos de cómo usar Files Service en tus proyectos:
         </repository>
         <repository>
           <id>github</id>
-          <url>https://maven.pkg.github.com/TU_USUARIO/Files_Service</url>
+          <url>https://maven.pkg.github.com/Shauanth/Files_service</url>
           <snapshots>
             <enabled>true</enabled>
           </snapshots>
@@ -175,7 +175,7 @@ En tu `pom.xml`:
 ```xml
 <repository>
   <id>github</id>
-  <url>https://maven.pkg.github.com/TU_USUARIO/Files_Service</url>
+  <url>https://maven.pkg.github.com/Shauanth/Files_service</url>
   <snapshots>
     <enabled>true</enabled>
   </snapshots>
@@ -191,6 +191,8 @@ Luego agrega la dependencia:
   <version>1.0.0</version>
 </dependency>
 ```
+
+> `TransferService` se registra automáticamente al agregar la dependencia (Spring Boot AutoConfiguration), por lo que no necesitas `@ComponentScan` manual.
 
 #### 3. Usar en tu código
 

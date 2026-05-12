@@ -13,7 +13,7 @@
     <version>1.0.0</version>
     <name>Files Service</name>
     <description>Microservicio de transferencia de archivos entre sistemas con soporte para Google Drive y múltiples fuentes</description>
-    <url>https://github.com/Shauanth/Files_Service</url>
+    <url>https://github.com/Shauanth/Files_service</url>
     <licenses>
         <license>
             <name>MIT License</name>
@@ -28,9 +28,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/Shauanth/Files_Service.git</connection>
-        <developerConnection>scm:git:https://github.com/Shauanth/Files_Service.git</developerConnection>
-        <url>https://github.com/Shauanth/Files_Service</url>
+        <connection>scm:git:https://github.com/Shauanth/Files_service.git</connection>
+        <developerConnection>scm:git:https://github.com/Shauanth/Files_service.git</developerConnection>
+        <url>https://github.com/Shauanth/Files_service</url>
     </scm>
     <properties>
         <java.version>17</java.version>
@@ -129,6 +129,19 @@
                                 </path>
                             </annotationProcessorPaths>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
