@@ -25,11 +25,12 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+        server-id: github
+        server-username: GITHUB_ACTOR
+        server-password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Compilar con Maven
       run: mvn -B clean package -DskipTests
 
     - name: Publicar en GitHub Packages
       run: mvn -B deploy -DskipTests
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
