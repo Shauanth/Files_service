@@ -55,7 +55,8 @@
 
     <distributionManagement>
         <repository>
-            <id>github</id> <url>https://maven.pkg.github.com/Shauanth/Files_Service</url>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/Shauanth/Files_service</url>
         </repository>
     </distributionManagement>
 
