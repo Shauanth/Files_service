@@ -55,9 +55,7 @@
 
     <distributionManagement>
         <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/Shauanth/Files_Service</url>
+            <id>github</id> <url>https://maven.pkg.github.com/Shauanth/Files_Service</url>
         </repository>
     </distributionManagement>
 

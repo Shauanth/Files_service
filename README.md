@@ -7,12 +7,27 @@
 ## 📋 Tabla de Contenidos
 
 - [Características](#características)
+- [Punto de Inicio](#punto-de-inicio)
+- [Guías Disponibles](#guías-disponibles)
 - [Requisitos Previos](#requisitos-previos)
 - [Instalación y Configuración](#instalación-y-configuración)
 - [Endpoints](#endpoints)
 - [Ejemplos de Uso](#ejemplos-de-uso)
 - [Despliegue](#despliegue)
 - [Estructura del Proyecto](#estructura-del-proyecto)
+
+---
+
+## 🎯 Punto de Inicio
+
+**¿No sabes por dónde empezar?** Lee [INICIO_AQUI.md](INICIO_AQUI.md)
+
+Esta guía te ayudará a encontrar exactamente lo que necesitas:
+- 🚀 Publicar el servicio en GitHub
+- 📦 Usar como dependencia en otro proyecto
+- 🔐 Configurar credenciales de forma segura
+- 💡 Ver ejemplos de código
+- ✅ Checklist para seguir paso a paso
 
 ---
 
@@ -39,14 +54,16 @@
 
 ## 📦 Instalación y Configuración
 
-### 1. Clonar el repositorio
+### Opción A: Ejecutar el Servicio Directamente
+
+#### 1. Clonar el repositorio
 
 ```bash
-git clone <URL-DEL-REPOSITORIO>
+git clone https://github.com/TU_USUARIO/Files_Service.git
 cd Files_Service
 ```
 
-### 2. Configurar propiedades de la aplicación
+#### 2. Configurar propiedades de la aplicación
 
 Edita `src/main/resources/application.properties`:
 
@@ -62,19 +79,163 @@ logging.level.shauanth.dev.files_service=INFO
 logging.level.org.springframework.web=WARN
 ```
 
-### 3. Compilar el proyecto
+#### 3. Compilar el proyecto
 
 ```bash
 mvn clean install
 ```
 
-### 4. Ejecutar la aplicación
+#### 4. Ejecutar la aplicación
 
 ```bash
 mvn spring-boot:run
 ```
 
 La aplicación estará disponible en `http://localhost:8080`
+
+---
+
+## 📚 Guías Disponibles
+
+### [🚀 QUICKSTART.md](QUICKSTART.md) - Guía Rápida (5 minutos)
+Publicar el servicio en GitHub Packages y usarlo en tus proyectos en 5 pasos simples.
+
+### [🔐 CONFIGURACION_SEGURA.md](CONFIGURACION_SEGURA.md) - Configuración de Seguridad
+Cómo configurar credenciales de forma segura sin exponer tokens:
+- Variables de entorno
+- Archivo settings.xml con placeholders
+- GitHub CLI (recomendado)
+- Archivo .netrc
+
+### [💡 EJEMPLOS_DE_USO.md](EJEMPLOS_DE_USO.md) - Ejemplos de Código
+Ejemplos prácticos de cómo usar Files Service en tus proyectos:
+- Controlador simple
+- Servicio wrapper
+- Endpoints REST
+- Tests unitarios
+- Manejo de errores
+- Configuración segura
+
+---
+
+### Opción B: Usar como Dependencia en Otro Proyecto
+
+#### 1. Configurar acceso a GitHub Packages
+
+**Crear o editar `~/.m2/settings.xml`:**
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.1.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd">
+  <activeProfiles>
+    <activeProfile>github</activeProfile>
+  </activeProfiles>
+
+  <profiles>
+    <profile>
+      <id>github</id>
+      <repositories>
+        <repository>
+          <id>central</id>
+          <url>https://repo1.maven.org/maven2</url>
+        </repository>
+        <repository>
+          <id>github</id>
+          <url>https://maven.pkg.github.com/TU_USUARIO/Files_Service</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+
+  <servers>
+    <server>
+      <id>github</id>
+      <username>TU_USUARIO_GITHUB</username>
+      <password>TU_TOKEN_GITHUB</password>
+    </server>
+  </servers>
+</settings>
+```
+
+**Generar Token de GitHub:**
+1. Ve a [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
+2. Click en "Generate new token (classic)"
+3. Dale permisos: `read:packages`
+4. Copia el token y úsalo en el `settings.xml`
+
+#### 2. Agregar dependencia a tu proyecto
+
+En tu `pom.xml`:
+
+```xml
+<repository>
+  <id>github</id>
+  <url>https://maven.pkg.github.com/TU_USUARIO/Files_Service</url>
+  <snapshots>
+    <enabled>true</enabled>
+  </snapshots>
+</repository>
+```
+
+Luego agrega la dependencia:
+
+```xml
+<dependency>
+  <groupId>io.github.shauanth</groupId>
+  <artifactId>files-service</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+#### 3. Usar en tu código
+
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import shauanth.dev.files_service.Service.TransferService;
+import shauanth.dev.files_service.DTO.FileData;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/files")
+public class MyController {
+
+    @Autowired
+    private TransferService transferService;
+
+    @PostMapping("/download")
+    public ResponseEntity<List<FileData>> downloadFiles(@RequestBody List<String> urls) {
+        Map<String, String> headers = Map.of(
+            "Authorization", "Bearer mi_token"
+        );
+        List<FileData> files = transferService.downloadAsBase64Batch(urls, headers);
+        return ResponseEntity.ok(files);
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadFiles(
+            @RequestBody List<FileData> files,
+            @RequestParam String targetUrl) {
+        Map<String, String> headers = Map.of(
+            "Authorization", "Bearer token_destino"
+        );
+        List<String> responses = transferService.uploadBase64Batch(files, targetUrl, headers);
+        return ResponseEntity.ok("Archivos cargados: " + responses.size());
+    }
+}
+```
+
+#### 4. Compilar y ejecutar
+
+```bash
+mvn clean install
+mvn spring-boot:run
+```
 
 ---
 
