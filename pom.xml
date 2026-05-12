@@ -8,23 +8,29 @@
         <version>3.5.14</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>Shauanth.dev</groupId>
-    <artifactId>Files_Service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>Files_Service</name>
-    <description>Files_Service</description>
-    <url/>
+    <groupId>io.github.shauanth</groupId>
+    <artifactId>files-service</artifactId>
+    <version>1.0.0</version>
+    <name>Files Service</name>
+    <description>Microservicio de transferencia de archivos entre sistemas con soporte para Google Drive y múltiples fuentes</description>
+    <url>https://github.com/Shauanth/Files_Service</url>
     <licenses>
-        <license/>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
     </licenses>
     <developers>
-        <developer/>
+        <developer>
+            <name>Shauanth</name>
+            <email>a20212602@pucp.edu.pe</email>
+            <url>https://github.com/Shauanth</url>
+        </developer>
     </developers>
     <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
+        <connection>scm:git:https://github.com/Shauanth/Files_Service.git</connection>
+        <developerConnection>scm:git:https://github.com/Shauanth/Files_Service.git</developerConnection>
+        <url>https://github.com/Shauanth/Files_Service</url>
     </scm>
     <properties>
         <java.version>17</java.version>
@@ -46,6 +52,14 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/Shauanth/Files_Service</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <plugins>
